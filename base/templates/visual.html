@@ -1,0 +1,181 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <title>Document</title>
+</head>
+<body>
+    <header>
+        <h1 class="logo">Визуал</h1>
+        <div class="nav">
+            <a class="nav_link" href="{% url 'index' %}">Главная</a>
+            <a class="nav_link" href="{% url 'files' %}">Мои файлы</a>
+            <a class="nav_link" href="#">Команда</a>
+            {% if user.is_authenticated %}
+            <a href="#" class="username">{{ user.username }}</a>
+            {% else %}
+            <a href="{% url 'login' %}" class="username">login</a>
+            {% endif %}
+        </div>
+    </header>
+    <main>
+        <h1>Текущий файл: {{file_name}}</h1>
+        <form method="GET">
+            <p style="color: white; margin-bottom: 5px;">Активные стобцы</p>
+            <div style="display: flex; flex-direction: row; gap: 5px;">
+                {% for c in columns %}
+                <div class="input-columns {% if forloop.counter not in checked %}off{% endif %}"><input type="checkbox" name="{{forloop.counter}}" style="pointer-events: none;" {% if forloop.counter in checked %}checked{% endif %} id=""><p>{{forloop.counter}}</p></div>
+                {% endfor %}  
+                <button type="submit"class="refresh-button">Обновить</button>
+            </div>          
+        </form>
+        <ul class="0">
+            {% autoescape off %}
+            {{ node.self_html_representation|safe }}
+            {% endautoescape %}
+        </ul>  
+    </main>
+</body>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Montserrat Alternates';
+        background-color: #E6E6E6;
+    }
+    header {
+        display: flex;
+        flex-direction: row;
+        padding: 0 45px;
+        align-items: center;
+        justify-content: space-between;
+        background-color: #2d2d2d;
+        color: #ffffff;
+        height: 65px;
+    }
+    .logo {
+        font-weight: 400;
+        margin: 0;
+    }
+    .nav {
+        display: flex;
+        flex-direction: row;
+        gap: 40px;
+        
+    }
+    .nav_link {
+        text-decoration: none;
+        color: #ffffff;
+        align-items: center;
+        display: flex;
+    }
+    .nav_link:hover {
+        color: #81F7FF;
+        transition: 0.15s;
+    }
+    main {
+        margin: 0 25px;
+    }
+    main > ul {
+        /* font-size: 10px; */
+    }
+    form {
+        padding: 20px;
+        background-color: #2d2d2d;
+        width: max-content;
+        border-radius: 20px;
+    }
+    .input-columns {
+        display: flex;
+        flex-direction: row;
+        border: 2px solid white;
+        padding: 5px 15px;
+        border-radius: 15px;
+        color: white;
+        cursor: pointer;
+        p {
+            padding: 0;
+            margin-left: 5px;
+        }
+    }
+    .off {
+        border: 2px solid rgb(117, 117, 117);
+    }
+    .refresh-button {
+        border: none;
+        background-color: white;
+        border-radius: 20px;
+        font-family: 'Montserrat Alternates';
+        font-weight: 450;
+        padding: 0 10px;
+        cursor: pointer;
+    }
+    ul {
+        list-style: none;
+        height: fit-content;
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+    }
+    li {
+        display: flex;
+        flex-direction: row;
+        align-items: strech;
+        height: 100%;
+        padding: 0;
+        gap: 20px;	
+    }
+    p {
+        margin: 0;
+        padding: 5px;
+        display: flex;
+        text-align: center;
+        align-items: center;
+        /* min-height: 29px; */
+    }
+    
+    li:nth-child(even) > p{
+        background-color: rgba(110, 110, 110, 0.15);
+    }
+    li:nth-child(odd) > p{
+        background-color: rgba(110, 110, 110, 0.34);		
+    }
+    li:first-child > p{
+        background-color: rgba(110, 110, 110, 0.24);		
+    }
+    .invisible {
+        background-color: #E6E6E6 !important;
+    }
+</style>
+<script src="{% static 'inputs_script.js' %}"></script>
+<script>
+	document.addEventListener("DOMContentLoaded", function() {
+		pos=0
+		columns = {{node.max_depth}};
+		for (var times = 0; times < columns; times++){
+			max_width = 0
+			uls = document.getElementsByClassName(`${pos}`);
+			for (var j=0; j < uls.length; j++){
+				current_ul = uls[j];
+				lis = current_ul.querySelectorAll(":scope > li");;
+				// console.log(pos, lis)
+				for (var k=0; k < lis.length; k++){
+					current_li = lis[k];
+					li_width = current_li.getElementsByTagName("p")[0].clientWidth;
+					max_width = Math.max(max_width, li_width);
+				}
+				for (var k=0; k < lis.length; k++){
+					current_li = lis[k];
+					li_width = current_li.getElementsByTagName("p")[0].style.width = `${max_width}px`;
+				}			
+			}
+			pos += 1;
+		}
+	});
+</script>
+</html>

@@ -23,12 +23,14 @@
         </div>
     </header>
     <div class="main">
+        {% if user.is_authenticated %}
         <p>Загрузить файл</p>
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form }}
             <button type="submit" id="upload">Загрузить</button>
         </form>
+        {% endif %}
     </div>
 </body>
 <style>
@@ -101,6 +103,10 @@
         padding: 5px;
         border-radius: 10px;
         text-decoration: none;
+    }
+    .username:hover {
+        background-color: #81F7FF;
+        transition: 0.15s;
     }
 </style>
 </html>
