@@ -3,12 +3,13 @@ from django.http import HttpResponse
 
 
 class Node:
-    def __init__(self, value, position, max_depth=None, isLastinRow=False):
+    def __init__(self, value, position, max_depth=None, isLastinRow=False, print_exclude=False):
         self.value = value
         self.children = dict()
         self.position = position
         self.max_depth = max_depth
         self.isLastInRow = isLastinRow
+        self.print_exclude = print_exclude
 
     def __str__(self):
         if self.value is None:
@@ -39,6 +40,11 @@ class Node:
             html = f"<li><p class='invisible'>{self}</p>"
         else:
             html = f"<li><p>{self}</p>"
+
+        if self.print_exclude:
+            html = "<li>"
+        
+
         children = self.get_children()
         if len(children) != 0:
             html += f"<ul class='{self.position+1}'>"
@@ -63,14 +69,14 @@ def get_active_file(file_link):
 
 
 def generate_visualization_tree(file) -> Node:
-    mainNode = Node("", 0, 0)
+    mainNode = Node("", 0, 0, print_exclude=True)
     for line in file.rows:
         isFirst = True
         prevNote = None
         startNode = None
         node_position = 1
         for v in line:
-            currentNote = Node(v.value, node_position)           
+            currentNote = Node(v.value, node_position)      
             node_position += 1
             mainNode.max_depth = max(mainNode.max_depth, node_position)
             if isFirst:
@@ -79,7 +85,7 @@ def generate_visualization_tree(file) -> Node:
                 isFirst = False
             else:
                 prevNote.add_child(currentNote)
-                prevNote = currentNote
+                prevNote = currentNote   
         prevNote.isLastInRow = True
         mainNode.add_child(startNode)
     return mainNode

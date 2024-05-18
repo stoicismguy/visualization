@@ -24,8 +24,8 @@
         </div>
     </header>
     <main>
-        <h1>Текущий файл: {{file_name}}</h1>
-        <form method="GET">
+        <h1 style="margin-left: 25px;">Текущий файл: {{file_name}}</h1>
+        <form method="GET" style="margin-left: 25px;">
             <p style="color: white; margin-bottom: 5px;">Активные стобцы</p>
             <div style="display: flex; flex-direction: row; gap: 5px;">
                 {% for c in columns %}
@@ -46,7 +46,7 @@
         margin: 0;
         padding: 0;
         font-family: 'Montserrat Alternates';
-        background-color: #E6E6E6;
+        /* background-color: #E6E6E6; */
     }
     header {
         display: flex;
@@ -79,7 +79,8 @@
         transition: 0.15s;
     }
     main {
-        margin: 0 25px;
+        margin: 0;
+        margin-left: 10px;
     }
     main > ul {
         /* font-size: 10px; */
@@ -129,6 +130,8 @@
         height: 100%;
         padding: 0;
         gap: 20px;	
+        /* word-wrap: break-word; */
+        text-wrap: balance;
     }
     p {
         margin: 0;
@@ -137,19 +140,23 @@
         text-align: center;
         align-items: center;
         /* min-height: 29px; */
+        /* text-wrap: wrap; */
+        text-wrap: balance;
+        overflow: hidden;
+        /* text-overflow: ellipsis; */
     }
     
     li:nth-child(even) > p{
-        background-color: rgba(110, 110, 110, 0.15);
+        background-color: rgba(9, 143, 153, 0.15);
     }
     li:nth-child(odd) > p{
-        background-color: rgba(110, 110, 110, 0.34);		
+        background-color: rgba(9, 143, 153, 0.34);		
     }
     li:first-child > p{
-        background-color: rgba(110, 110, 110, 0.24);		
+        background-color: rgba(9, 143, 153, 0.24);		
     }
     .invisible {
-        background-color: #E6E6E6 !important;
+        background-color: #ffffff !important;
     }
 </style>
 <script src="{% static 'inputs_script.js' %}"></script>
@@ -157,18 +164,29 @@
 	document.addEventListener("DOMContentLoaded", function() {
 		pos=0
 		columns = {{node.max_depth}};
+        screen_width = window.screen.width;
+        max_column_width = parseInt(screen_width / columns);
+        
 		for (var times = 0; times < columns; times++){
 			max_width = 0
 			uls = document.getElementsByClassName(`${pos}`);
 			for (var j=0; j < uls.length; j++){
 				current_ul = uls[j];
 				lis = current_ul.querySelectorAll(":scope > li");;
-				// console.log(pos, lis)
 				for (var k=0; k < lis.length; k++){
 					current_li = lis[k];
 					li_width = current_li.getElementsByTagName("p")[0].clientWidth;
-					max_width = Math.max(max_width, li_width);
-				}
+                    if (li_width > max_width){
+                        max_width = li_width
+                    }
+				}		
+			}
+            if (max_width > max_column_width) {
+                max_width = max_column_width - 5;
+            }
+            for (var j=0; j < uls.length; j++){
+				current_ul = uls[j];
+				lis = current_ul.querySelectorAll(":scope > li");
 				for (var k=0; k < lis.length; k++){
 					current_li = lis[k];
 					li_width = current_li.getElementsByTagName("p")[0].style.width = `${max_width}px`;
