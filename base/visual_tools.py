@@ -1,6 +1,6 @@
 import openpyxl
 from django.http import HttpResponse
-
+from openpyxl.utils import get_column_letter
 
 class Node:
     def __init__(self, value, position, max_depth=None, isLastinRow=False, print_exclude=False):
@@ -90,6 +90,24 @@ def generate_visualization_tree(file) -> Node:
         mainNode.add_child(startNode)
     return mainNode
 
+
+def delete_rows_filtering(active_table, filters):
+    for i in range(active_table.max_row, 0, -1):
+        row = active_table[i]
+        for index, values in filters.items():
+            # print(index, values, row)
+            if row[index].value not in values:
+                # active_table.delete_rows(i)
+                # print(index+1, active_table.max_column)
+                for new_i in range(index+1, active_table.max_column+1):
+                    print("now")
+                    active_table[f'{get_column_letter(new_i)}{i}'].value = None
+                break
+
+
+def delete_columns_by_number(active_table, columns):
+    for c in reversed(sorted(list(columns))):
+        active_table.delete_cols(int(c))
 
 
 

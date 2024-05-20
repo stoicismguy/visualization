@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
     <title>Document</title>
 </head>
 <body>
@@ -24,16 +25,33 @@
         </div>
     </header>
     <main>
+        {% csrf_token %}
         <h1 style="margin-left: 25px;">Текущий файл: {{file_name}}</h1>
-        <form method="GET" style="margin-left: 25px;">
+        <div class="form" style="margin-left: 25px;">
             <p style="color: white; margin-bottom: 5px;">Активные стобцы</p>
             <div style="display: flex; flex-direction: row; gap: 5px;">
                 {% for c in columns %}
-                <div class="input-columns {% if forloop.counter not in checked %}off{% endif %}"><input type="checkbox" name="{{forloop.counter}}" style="pointer-events: none;" {% if forloop.counter in checked %}checked{% endif %} id=""><p>{{forloop.counter}}</p></div>
+                <div class="config_buttons">
+                    <div class="input-columns {% if forloop.counter not in checked %}off{% endif %}">
+                        <div class="isActiveColumn" style="display: flex; flex-direction: row;">
+                            <input type="checkbox" name="{{forloop.counter}}" style="pointer-events: none;" {% if forloop.counter in checked %}checked{% endif %} id="">
+                            <p>{{forloop.counter}}</p>
+                        </div>
+                    </div>
+                    <div class="dropdown-check-list list-vipal" tabindex="100">
+                        <span class="anchor">Фильтр</span>
+                        <ul class="items">
+                            {% for v in c.values %}
+                            <li><input type="checkbox" name="{{ forloop.parentloop.counter }}v" value="{{v}}" checked/>{{v}}</li>
+                            {% endfor %}
+                        </ul>
+                      </div>
+                </div>
                 {% endfor %}  
+                
                 <button type="submit"class="refresh-button">Обновить</button>
             </div>          
-        </form>
+        </div>
         <ul class="0">
             {% autoescape off %}
             {{ node.self_html_representation|safe }}
@@ -85,7 +103,7 @@
     main > ul {
         /* font-size: 10px; */
     }
-    form {
+    .form {
         padding: 20px;
         background-color: #2d2d2d;
         width: max-content;
@@ -93,7 +111,7 @@
     }
     .input-columns {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         border: 2px solid white;
         padding: 5px 15px;
         border-radius: 15px;
@@ -158,8 +176,67 @@
     .invisible {
         background-color: #ffffff !important;
     }
+
+    dropdown-check-list {
+  display: inline-block;
+}
+
+.dropdown-check-list .anchor {
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+  padding: 5px 50px 5px 10px;
+  border: 2px solid #ffffff;
+  color: white;
+  border-radius: 20px;
+  margin-top: 5px;
+}
+
+.dropdown-check-list .anchor:after {
+  position: absolute;
+  content: "";
+  border-left: 2px solid white;
+  border-top: 2px solid white;
+  padding: 5px;
+  right: 10px;
+  top: 20%;
+  -moz-transform: rotate(-135deg);
+  -ms-transform: rotate(-135deg);
+  -o-transform: rotate(-135deg);
+  -webkit-transform: rotate(-135deg);
+  transform: rotate(-135deg);
+}
+
+.dropdown-check-list .anchor:active:after {
+  right: 8px;
+  top: 21%;
+}
+
+.dropdown-check-list ul.items {
+  padding: 2px;
+  display: none;
+  margin: 0;
+  border: 2px solid #ffffff;
+  border-top: none;
+  border-radius: 10px;
+  color: white;
+}
+
+.dropdown-check-list ul.items li {
+  list-style: none;
+}
+
+.dropdown-check-list.visible .anchor {
+  color: #ffffff;
+}
+
+.dropdown-check-list.visible .items {
+  display: block;
+}
 </style>
 <script src="{% static 'inputs_script.js' %}"></script>
+<script src="{% static 'row_filter.js' %}"></script>
+<script src="{% static 'workin_form.js' %}"></script>
 <script>
 	document.addEventListener("DOMContentLoaded", function() {
 		pos=0
