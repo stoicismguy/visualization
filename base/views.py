@@ -55,8 +55,9 @@ def visualization_view(request, file_id):
     for i in range(open_file.max_column):
         values = []
         for j in open_file[get_column_letter(i+1)]:
-            values.append(j.value)
-        values = set(values)
+            if j.value is not None:
+                values.append(j.value)
+        values = sorted(set(values))
         c = OutColumn(values)
         all_checkboxes_out.append(c)
 
@@ -97,10 +98,13 @@ def get_node_html_by_filters(request, file_id):
     non_active_columns = json.loads(data.get("unactive_buttons")[0])
     # print(non_active_columns)
 
-   
     filters = {}
     for i in range(len(data)-2):
-        filters[i] = set(data.get(f"{i}[]"))
+        d = data.get(f"{i}[]")
+        if d is None:
+            filters[i] = set([])
+        else:
+            filters[i] = set(d)
 
     delete_rows_filtering(open_file, filters)
     delete_columns_by_number(open_file, non_active_columns)

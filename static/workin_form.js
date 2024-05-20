@@ -19,7 +19,12 @@ refresh_button.onclick = function (e) {
                 columns_data.push(input.getAttribute("value"));
             }
         });
-        send_data[i] = columns_data;
+        if (columns_data.length == 0){
+            send_data[i] = columns_data.toString();
+        }
+        else {
+            send_data[i] = columns_data;
+        }  
     }
     send_data['unactive_buttons'] = JSON.stringify(unactive_buttons);
     token = document.getElementsByName("csrfmiddlewaretoken")[0].getAttribute('value');
@@ -56,7 +61,11 @@ function row_size(columns) {
             lis = current_ul.querySelectorAll(":scope > li");;
             for (var k=0; k < lis.length; k++){
                 current_li = lis[k];
-                li_width = current_li.getElementsByTagName("p")[0].clientWidth;
+                li_p = current_li.getElementsByTagName("p")[0];
+                if (li_p == undefined) {
+                    continue;
+                }
+                li_width = li_p.clientWidth;  
                 if (li_width > max_width){
                     max_width = li_width
                 }
@@ -70,7 +79,11 @@ function row_size(columns) {
             lis = current_ul.querySelectorAll(":scope > li");
             for (var k=0; k < lis.length; k++){
                 current_li = lis[k];
-                li_width = current_li.getElementsByTagName("p")[0].style.width = `${max_width}px`;
+                li_p = current_li.getElementsByTagName("p")[0];
+                if (li_p == undefined) {
+                    continue;
+                }
+                li_p.style.width = `${max_width}px`;
             }			
         }
         pos += 1;
