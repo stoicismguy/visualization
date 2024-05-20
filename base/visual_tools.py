@@ -127,7 +127,6 @@ def delete_rows_filtering(active_table, filters):
                 # active_table.delete_rows(i)
                 # print(index+1, active_table.max_column)
                 for new_i in range(index+1, active_table.max_column+1):
-                    print("now")
                     active_table[f'{get_column_letter(new_i)}{i}'].value = None
                 break
 
