@@ -55,9 +55,8 @@ def visualization_view(request, file_id):
     for i in range(open_file.max_column):
         values = []
         for j in open_file[get_column_letter(i+1)]:
-            if j.value is not None:
-                values.append(j.value)
-        values = sorted(set(values))
+            values.append(j.value)
+        values = set(values)
         c = OutColumn(values)
         all_checkboxes_out.append(c)
 

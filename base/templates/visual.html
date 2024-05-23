@@ -39,8 +39,10 @@
                         </div>
                     </div>
                     <div class="dropdown-check-list list-vipal" tabindex="100">
-                        <span class="anchor">Фильтр</span>
+                        <span class="anchor">Фильтр</span>                       
                         <ul class="items">
+                            <button class="choose-all">Выделить все</button>
+                            <button class="unchoose-all">НеВыделить все</button>
                             {% for v in c.values %}
                             <li><input type="checkbox" name="{{ forloop.parentloop.counter }}v" value="{{v}}" checked/>{{v}}</li>
                             {% endfor %}
@@ -162,6 +164,7 @@
         text-wrap: balance;
         overflow: hidden;
         /* text-overflow: ellipsis; */
+        cursor: pointer;
     }
     
     li:nth-child(even) > p{
@@ -222,6 +225,32 @@
   color: white;
 }
 
+.choose-all {
+    border: 2px solid #ffffff;
+    width: calc(100% - 10px);
+    background-color: white;
+    color:#2d2d2d;
+    border-radius: 10px;
+    font-weight: 500;
+    padding: 3px 10px;
+    margin: 5px 5px 0px 5px;
+    font-family: 'Montserrat Alternates';
+    cursor: pointer;
+}
+
+.unchoose-all {
+    border: 2px solid #ffffff;
+    width: calc(100% - 10px);
+    background-color: #2d2d2d;
+    color:#ffffff;
+    border-radius: 10px;
+    font-weight: 500;
+    padding: 3px 10px;
+    margin: 5px 5px;
+    font-family: 'Montserrat Alternates';
+    cursor: pointer;
+}
+
 .dropdown-check-list ul.items li {
   list-style: none;
 }
@@ -237,40 +266,5 @@
 <script src="{% static 'inputs_script.js' %}"></script>
 <script src="{% static 'row_filter.js' %}"></script>
 <script src="{% static 'workin_form.js' %}"></script>
-<script>
-	document.addEventListener("DOMContentLoaded", function() {
-		pos=0
-		columns = {{node.max_depth}};
-        screen_width = window.screen.width;
-        max_column_width = parseInt(screen_width / columns);
-        
-		for (var times = 0; times < columns; times++){
-			max_width = 0
-			uls = document.getElementsByClassName(`${pos}`);
-			for (var j=0; j < uls.length; j++){
-				current_ul = uls[j];
-				lis = current_ul.querySelectorAll(":scope > li");;
-				for (var k=0; k < lis.length; k++){
-					current_li = lis[k];
-					li_width = current_li.getElementsByTagName("p")[0].clientWidth;
-                    if (li_width > max_width){
-                        max_width = li_width
-                    }
-				}		
-			}
-            if (max_width > max_column_width) {
-                max_width = max_column_width - 5;
-            }
-            for (var j=0; j < uls.length; j++){
-				current_ul = uls[j];
-				lis = current_ul.querySelectorAll(":scope > li");
-				for (var k=0; k < lis.length; k++){
-					current_li = lis[k];
-					li_width = current_li.getElementsByTagName("p")[0].style.width = `${max_width}px`;
-				}			
-			}
-			pos += 1;
-		}
-	});
-</script>
+
 </html>

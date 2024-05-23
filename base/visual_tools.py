@@ -124,11 +124,11 @@ def delete_rows_filtering(active_table, filters):
         for index, values in filters.items():
             # print(index, values, row)
             if str(row[index].value) not in values:
-                # active_table.delete_rows(i)
+                active_table.delete_rows(i)
                 # print(index+1, active_table.max_column)
-                for new_i in range(index+1, active_table.max_column+1):
-                    active_table[f'{get_column_letter(new_i)}{i}'].value = None
-                break
+                # for new_i in range(index+1, active_table.max_column+1):
+                #     active_table[f'{get_column_letter(new_i)}{i}'].value = None
+                # break
 
 
 def delete_columns_by_number(active_table, columns):
